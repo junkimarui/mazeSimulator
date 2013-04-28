@@ -14,6 +14,7 @@ public class Map {
     public static final char CHAR_GOAL = '\u0047';
     
     private int[][] data;
+    private State start;
     private State goal;
 
     public int get(int x, int y) {
@@ -60,6 +61,8 @@ public class Map {
                 data[i][j] = val;
                 if (val == GOAL)
                     goal = new State(j,i,0);
+                else if (val == START)
+                    start = new State(j,i,0);
             }
         }
     }
@@ -73,16 +76,38 @@ public class Map {
     }
 
     public Tuple<Integer, Integer> tellRobotForward(Robot robot) {
-      //TODO: implement this!
-        return null;
+        State robotState = robot.getState();
+        int direction = robotState.direction;
+        int diff_x = (direction % 2) * (2 - direction);
+        int diff_y = (1 - (direction % 2)) * (direction - 1);
+        int mapState1 = this.get(robotState.x + diff_x, robotState.y + diff_y);
+        if (mapState1 == WALL || mapState1 == GOAL) {
+            return new Tuple<Integer, Integer> (mapState1,WALL);
+        }
+        int mapState2 = this.get(robotState.x + diff_x*2, robotState.y + diff_y*2);
+        return new Tuple<Integer, Integer> (mapState1,mapState2);
     }
 
     public boolean moveRobotAhead(Robot robot) {
-        //TODO: implement this!
-        return false;
+        State robotState = robot.getState();
+        int direction = robotState.direction;
+        int diff_x = (direction % 2) * (2 - direction);
+        int diff_y = (1 - (direction % 2)) * (direction - 1);
+        int mapState = this.get(robotState.x + diff_x, robotState.y + diff_y);
+        if (mapState == WALL)
+            return false;
+        else {
+            robot.getState().change(new State(diff_x, diff_y, 0));
+            return true;
+        }
     }
     
     public boolean isRobotOnGoal(Robot robot) {
         return robot.getState().equalsPosition(goal);
+    }
+    
+    public void placeRobot(Robot robot) {
+        robot.getState().x = start.x;
+        robot.getState().y = start.y;
     }
 }

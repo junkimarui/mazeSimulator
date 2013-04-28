@@ -9,6 +9,7 @@ public class Robot {
     public Robot (Map map) {
         this.map = map;
         this.state = new State(0, 0, State.NORTH);
+        map.placeRobot(this);
     }
     public void turnLeft() {
         map.turnRobotLeft(this);
