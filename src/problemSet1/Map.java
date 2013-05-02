@@ -4,22 +4,18 @@ import java.io.*;
 import java.util.*;
 
 public class Map {
-    public static final int WALL = 0;
-    public static final int EMPTY = 1;
-    public static final int START = 2;
-    public static final int GOAL = 3;
     public static final char CHAR_WALL = '\u2588';
     public static final char CHAR_EMPTY = '\u0020';
     public static final char CHAR_START = '\u0053';
     public static final char CHAR_GOAL = '\u0047';
     
-    private int[][] data;
+    private char[][] data;
     private State start;
     private State goal;
 
-    public int get(int x, int y) {
+    public char get(int x, int y) {
         if (x < 0 || x >= data[0].length || y < 0 || y >= data.length) {
-            return WALL;
+            return CHAR_WALL;
         }
         else {
             return data[y][x];
@@ -30,23 +26,12 @@ public class Map {
         FileReader fr = new FileReader(fileName);
         BufferedReader br = new BufferedReader(fr);
         String line;
-        ArrayList<ArrayList<Integer>> dataArray = new ArrayList<ArrayList<Integer>>();
+        ArrayList<ArrayList<Character>> dataArray = new ArrayList<ArrayList<Character>>();
         while ((line = br.readLine()) != null) {
-            ArrayList<Integer> lineArray = new ArrayList<Integer>();
+            ArrayList<Character> lineArray = new ArrayList<Character>();
             for (int i = 0; i < line.length(); i++) {
                 char c = line.charAt(i);
-                int val;
-                switch (c) {
-                case CHAR_WALL:
-                    val = WALL;
-                case CHAR_START:
-                    val = START;
-                case CHAR_GOAL:
-                    val = GOAL;
-                default:
-                    val = EMPTY;
-                }
-                lineArray.add(val);
+                lineArray.add(c);
             }
             dataArray.add(lineArray);
         }
@@ -54,14 +39,14 @@ public class Map {
             System.err.println("Illegal File Content");
             System.exit(-1);
         }
-        data = new int[dataArray.size()][dataArray.get(0).size()];
+        data = new char[dataArray.size()][dataArray.get(0).size()];
         for (int i = 0; i < data.length; i++) {
             for (int j = 0; j < data[0].length; j++) {
-                int val = dataArray.get(i).get(j);
+                char val = dataArray.get(i).get(j);
                 data[i][j] = val;
-                if (val == GOAL)
+                if (val == CHAR_GOAL)
                     goal = new State(j,i,0);
-                else if (val == START)
+                else if (val == CHAR_START)
                     start = new State(j,i,0);
             }
         }
@@ -75,36 +60,41 @@ public class Map {
         robot.getState().change(new State(0,0,State.RIGHT));
     }
 
-    public Tuple<Integer, Integer> tellRobotForward(Robot robot) {
+    public Tuple<Object, Object> tellRobotForward(Robot robot) {
         State robotState = robot.getState();
         int direction = robotState.direction;
         int diff_x = (direction % 2) * (2 - direction);
         int diff_y = (1 - (direction % 2)) * (direction - 1);
-        int mapState1 = this.get(robotState.x + diff_x, robotState.y + diff_y);
-        if (mapState1 == WALL || mapState1 == GOAL) {
-            return new Tuple<Integer, Integer> (mapState1,WALL);
+        char mapState1 = this.get(robotState.x + diff_x, robotState.y + diff_y);
+        if (mapState1 == CHAR_WALL || mapState1 == CHAR_GOAL) {
+            return new Tuple<Object, Object> (mapState1,CHAR_WALL);
         }
-        int mapState2 = this.get(robotState.x + diff_x*2, robotState.y + diff_y*2);
-        return new Tuple<Integer, Integer> (mapState1,mapState2);
+        char mapState2 = this.get(robotState.x + diff_x*2, robotState.y + diff_y*2);
+        return new Tuple<Object, Object> (mapState1,mapState2);
     }
 
-    public boolean moveRobotAhead(Robot robot) {
+    public Tuple<Object, Object> moveRobotAhead(Robot robot) {
         State robotState = robot.getState();
         int direction = robotState.direction;
         int diff_x = (direction % 2) * (2 - direction);
         int diff_y = (1 - (direction % 2)) * (direction - 1);
         int mapState = this.get(robotState.x + diff_x, robotState.y + diff_y);
-        if (mapState == WALL)
-            return false;
+        if (mapState == CHAR_WALL)
+            return new Tuple<Object, Object>('B','U');
         else {
-            robot.getState().change(new State(diff_x, diff_y, 0));
-            return true;
+            robotState.change(new State(diff_x, diff_y, 0));
+            if (robotState.equalsPosition(goal))
+                return new Tuple<Object, Object>('G','G');
+            else
+                return new Tuple<Object, Object>(robotState.x,robotState.y);
         }
     }
     
+    /*
     public boolean isRobotOnGoal(Robot robot) {
         return robot.getState().equalsPosition(goal);
     }
+    */
     
     public void placeRobot(Robot robot) {
         robot.getState().x = start.x;

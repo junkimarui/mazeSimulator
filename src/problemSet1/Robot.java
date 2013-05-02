@@ -17,10 +17,10 @@ public class Robot {
     public void turnRight() {
         map.turnRobotRight(this);
     }
-    public Tuple<Integer,Integer> lookForward() {
+    public Tuple<Object,Object> lookForward() {
         return map.tellRobotForward(this);
     }
-    public boolean moveAhead() {
+    public Tuple<Object, Object> moveAhead() {
         return map.moveRobotAhead(this);
     }
 }
