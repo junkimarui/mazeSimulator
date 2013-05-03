@@ -43,7 +43,6 @@ public class Map {
             System.err.println("Illegal File Content");
             System.exit(-1);
         }
-        System.out.println(dataArray.size()+" "+dataArray.get(0).size());
         data = new char[dataArray.size()][dataArray.get(0).size()];
         for (int i = 0; i < data.length; i++) {
             for (int j = 0; j < data[0].length; j++) {
