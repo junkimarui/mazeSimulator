@@ -105,19 +105,22 @@ public class Map {
     public void printMapAndRobot(Robot robot) {
         State robotState = robot.getState();
         State currentState = new State(0,0,0);
-        for (int i = 0; i < data.length; i++) {
-            System.out.print("\r");
-        }
-        for (int i = 0; i < data.length; i++) {
-            currentState.y = i;
-            for (int j = 0; j < data[i].length; j++) {
-                currentState.x = j;
-                if (robotState.equalsPosition(currentState))
-                    System.out.print(State.CHAR_ORIENTATION[robotState.orientation]);
-                else
-                    System.out.print(data[i][j]);
+        try {
+            PrintStream ps = new PrintStream(System.out, true, "UTF-8");
+            for (int i = 0; i < data.length; i++) {
+                currentState.y = i;
+                for (int j = 0; j < data[i].length; j++) {
+                    currentState.x = j;
+                    if (robotState.equalsPosition(currentState))
+                        ps.print(State.CHAR_ORIENTATION[robotState.orientation]);
+                    else
+                        ps.print(data[i][j]);
+                }
+                ps.println();
             }
-            System.out.println();
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 
