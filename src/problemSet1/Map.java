@@ -66,7 +66,7 @@ public class Map {
         int diff_x = (direction % 2) * (2 - direction);
         int diff_y = (1 - (direction % 2)) * (direction - 1);
         char mapState1 = this.get(robotState.x + diff_x, robotState.y + diff_y);
-        if (mapState1 == CHAR_WALL || mapState1 == CHAR_GOAL) {
+        if (mapState1 == CHAR_WALL) {
             return new Tuple<Object, Object> (mapState1,CHAR_WALL);
         }
         char mapState2 = this.get(robotState.x + diff_x*2, robotState.y + diff_y*2);
