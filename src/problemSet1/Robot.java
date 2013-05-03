@@ -17,6 +17,12 @@ public class Robot {
     public void turnRight() {
         map.turnRobotRight(this);
     }
+    public void randomlyReorient() {
+        int rand = (int)(Math.random()*4);
+        for (int i = 0; i< rand; i++) {
+            turnLeft();
+        }
+    }
     public Tuple<Object,Object> lookForward() {
         return map.tellRobotForward(this);
     }

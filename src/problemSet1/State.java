@@ -7,23 +7,25 @@ public class State {
     public static final int WEST = 3;
     public static final int LEFT = -1;
     public static final int RIGHT = 1;
+    /*  '↑','→','↓','←' */
+    public static final char[] CHAR_ORIENTATION = {'\u2191','\u2192','\u2193','\u2190'};
     
     public int x;
     public int y;
-    public int direction;
+    public int orientation;
     public State (int x, int y, int direction) {
         this.x = x;
         this.y = y;
-        this.direction = direction;
+        this.orientation = direction;
     }
     public State change(State diff) {
         this.x += diff.x;
         this.y += diff.y;
-        this.direction += diff.direction;
-        if (this.direction < 0)
-            this.direction += 4;
+        this.orientation += diff.orientation;
+        if (this.orientation < 0)
+            this.orientation += 4;
         else
-            this.direction = this.direction % 4;
+            this.orientation = this.orientation % 4;
         return this;
     }
     

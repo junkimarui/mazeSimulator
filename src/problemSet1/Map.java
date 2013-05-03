@@ -4,11 +4,11 @@ import java.io.*;
 import java.util.*;
 
 public class Map {
-    public static final char CHAR_WALL = '\u2588';
-    public static final char CHAR_EMPTY = '\u0020';
-    public static final char CHAR_START = '\u0053';
-    public static final char CHAR_GOAL = '\u0047';
-    
+    public static final char CHAR_WALL = '\u2588'; //'█'
+    public static final char CHAR_EMPTY = '\u0020'; //' '
+    public static final char CHAR_START = '\u0053'; //'S'
+    public static final char CHAR_GOAL = '\u0047'; //'G'
+
     private char[][] data;
     private State start;
     private State goal;
@@ -21,7 +21,7 @@ public class Map {
             return data[y][x];
         }
     }
-    
+
     public Map (String fileName) throws IOException {
         FileReader fr = new FileReader(fileName);
         BufferedReader br = new BufferedReader(fr);
@@ -62,7 +62,7 @@ public class Map {
 
     public Tuple<Object, Object> tellRobotForward(Robot robot) {
         State robotState = robot.getState();
-        int direction = robotState.direction;
+        int direction = robotState.orientation;
         int diff_x = (direction % 2) * (2 - direction);
         int diff_y = (1 - (direction % 2)) * (direction - 1);
         char mapState1 = this.get(robotState.x + diff_x, robotState.y + diff_y);
@@ -75,7 +75,7 @@ public class Map {
 
     public Tuple<Object, Object> moveRobotAhead(Robot robot) {
         State robotState = robot.getState();
-        int direction = robotState.direction;
+        int direction = robotState.orientation;
         int diff_x = (direction % 2) * (2 - direction);
         int diff_y = (1 - (direction % 2)) * (direction - 1);
         int mapState = this.get(robotState.x + diff_x, robotState.y + diff_y);
@@ -89,15 +89,30 @@ public class Map {
                 return new Tuple<Object, Object>(robotState.x,robotState.y);
         }
     }
-    
-    /*
-    public boolean isRobotOnGoal(Robot robot) {
-        return robot.getState().equalsPosition(goal);
-    }
-    */
-    
+
     public void placeRobot(Robot robot) {
         robot.getState().x = start.x;
         robot.getState().y = start.y;
+    }
+
+    public void printMapAndRobot(Robot robot) {
+        State robotState = robot.getState();
+        State currentState = new State(0,0,0);
+        for (int i = 0; i < data.length; i++) {
+            currentState.y = i;
+            for (int j = 0; j < data[i].length; j++) {
+                currentState.x = j;
+                if (robotState.equalsPosition(currentState))
+                    System.out.print(State.CHAR_ORIENTATION[robotState.orientation]);
+                else
+                    System.out.print(data[i][j]);
+            }
+            System.out.println();
+        }
+    }
+
+    public int manhattanDistance(Robot robot) {
+        return Math.abs(goal.x - robot.getState().x)
+        + Math.abs(goal.y - robot.getState().y);
     }
 }
