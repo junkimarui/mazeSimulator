@@ -36,9 +36,7 @@ public class Map {
             for (int i = 0; i < line.length(); i++) {
                 char c = line.charAt(i);
                 lineArray.add(c);
-                System.out.print(c);
             }
-            System.out.println();
             dataArray.add(lineArray);
         }
         if (dataArray.size() == 0) {

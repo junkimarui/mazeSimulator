@@ -18,7 +18,11 @@ public class Controller {
                 else {
                     robot.randomlyReorient();
                 }
-                Runtime.getRuntime().exec("clear");
+                
+                //clearing prompt
+                for (int i = 0; i < 30; i++)
+                    System.out.println();
+
                 map1.printMapAndRobot(robot);
                 loopCount++;
                 System.out.println("count:"+loopCount);
