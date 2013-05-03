@@ -17,14 +17,18 @@ public class Map {
         if (x < 0 || x >= data[0].length || y < 0 || y >= data.length) {
             return CHAR_WALL;
         }
+        else if (data[y][x] == CHAR_START){
+            return CHAR_EMPTY;
+        }
         else {
             return data[y][x];
         }
     }
 
     public Map (String fileName) throws IOException {
-        FileReader fr = new FileReader(fileName);
-        BufferedReader br = new BufferedReader(fr);
+        FileInputStream fr = new FileInputStream(fileName);
+        InputStreamReader in = new InputStreamReader(fr,"UTF-8");
+        BufferedReader br = new BufferedReader(in);
         String line;
         ArrayList<ArrayList<Character>> dataArray = new ArrayList<ArrayList<Character>>();
         while ((line = br.readLine()) != null) {
@@ -32,13 +36,16 @@ public class Map {
             for (int i = 0; i < line.length(); i++) {
                 char c = line.charAt(i);
                 lineArray.add(c);
+                System.out.print(c);
             }
+            System.out.println();
             dataArray.add(lineArray);
         }
         if (dataArray.size() == 0) {
             System.err.println("Illegal File Content");
             System.exit(-1);
         }
+        System.out.println(dataArray.size()+" "+dataArray.get(0).size());
         data = new char[dataArray.size()][dataArray.get(0).size()];
         for (int i = 0; i < data.length; i++) {
             for (int j = 0; j < data[0].length; j++) {
@@ -99,6 +106,9 @@ public class Map {
         State robotState = robot.getState();
         State currentState = new State(0,0,0);
         for (int i = 0; i < data.length; i++) {
+            System.out.print("\r");
+        }
+        for (int i = 0; i < data.length; i++) {
             currentState.y = i;
             for (int j = 0; j < data[i].length; j++) {
                 currentState.x = j;
@@ -111,7 +121,7 @@ public class Map {
         }
     }
 
-    public int manhattanDistance(Robot robot) {
+    public int manhattanDistanceToGoal(Robot robot) {
         return Math.abs(goal.x - robot.getState().x)
         + Math.abs(goal.y - robot.getState().y);
     }
