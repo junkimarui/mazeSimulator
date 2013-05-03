@@ -1,6 +1,6 @@
 package problemSet1;
 
-public class State {
+public class State implements Cloneable {
     public static final int NORTH = 0;
     public static final int EAST = 1;
     public static final int SOUTH = 2;
@@ -32,4 +32,23 @@ public class State {
     public boolean equalsPosition(State s) {
         return this.x == s.x && this.y == s.y;
     }
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        else if (!(obj instanceof State)) return false;
+        final State o = (State)obj;
+        return this.x == o.x && this.y == o.y && this.orientation == o.orientation;
+    }
+    @Override
+    public int hashCode() {
+        return this.x * 1000 + this.y * 10 + this.orientation;
+    }
+    @Override
+    public Object clone() {  
+        try {  
+            return super.clone();  
+        } catch (CloneNotSupportedException e) {
+            return null;  
+        }  
+    }  
 }

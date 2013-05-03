@@ -29,4 +29,16 @@ public class Robot {
     public Tuple<Object, Object> moveAhead() {
         return map.moveRobotAhead(this);
     }
+    
+    public Tuple<Object,Object> action(int actionID) {
+        if (actionID == 0) {
+            randomlyReorient();
+            return null;
+        }
+        else if (actionID == 1) {
+            return moveAhead();
+        }
+        return null;
+    }
+
 }
