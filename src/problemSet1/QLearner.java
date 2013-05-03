@@ -23,7 +23,7 @@ public class QLearner {
         for (int i = 0; i < trialNumber; i++) {
             Robot robot = new Robot(map);
             Tuple<Object, Object> signal = null;
-            while (signal != null && !signal.left.equals('G')) {
+            while (signal == null || !signal.left.equals('G')) {
                 double r = rand.nextDouble();//pick up random double [0.0 1.0)
                 int actionID = 0;
                 if (r < 0.2) {
