@@ -8,3 +8,9 @@
 Icon?
 ehthumbs.db
 Thumbs.db
+
+# emacs 
+*~
+
+# Java byte code
+bin/
