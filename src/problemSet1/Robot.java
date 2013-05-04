@@ -3,6 +3,7 @@ package problemSet1;
 public class Robot {
     private Map map;
     private State state;
+    public static int ACTION_NUM = 3;
     public State getState() {
         return state;
     }
@@ -32,10 +33,14 @@ public class Robot {
     
     public Tuple<Object,Object> action(int actionID) {
         if (actionID == 0) {
-            randomlyReorient();
+            turnLeft();
             return null;
         }
         else if (actionID == 1) {
+            turnRight();
+            return null;
+        }
+        else if (actionID == 2) {
             return moveAhead();
         }
         return null;

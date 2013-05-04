@@ -4,21 +4,79 @@ import java.io.IOException;
 
 public class Controller {
     public static String defaultFileName = "maze-61-21.txt";
+    public static int defaultProblemNumber = 4;
 
     public static void main(String[] args) {
-        String fileName = null;
         // if argument of this program exists  
-        // e.g. java -cp bin problemSet1/Controller [file name]
+        // e.g. java -cp bin problemSet1/Controller [problem number(2-4)] [file name(optional)]
+        // default: `java -cp bin problemSet1/Controller 4 maze-61-21.txt`
+        String fileName = defaultFileName;
+        int problemNumber = defaultProblemNumber;
         if (args.length > 0) {
-            fileName = args[0];
+            defaultProblemNumber = Integer.parseInt(args[0]);
+            if (args.length > 1)
+                fileName = args[1];
         }
-        else {
-            //otherwise uses defaultFileName
-            fileName = defaultFileName;
+        switch(problemNumber) {
+        case 2:
+            problem2(fileName);
+        case 3:
+            problem3(fileName);
+        case 4:
+            problem4(fileName);
+        default:
+            System.err.println("Please choose 2,3,4 for problem number");
         }
-        //problem3(fileName);
-        problem4(fileName);
     } 
+
+    private static void problem2(String fileName) {
+        try {
+            Map map = new Map(fileName);
+            Robot robot = new Robot(map);
+            int loopCount = 0;
+            Tuple<Object, Object> nextCoordinate = new Tuple<Object, Object> (Map.CHAR_EMPTY, Map.CHAR_EMPTY);
+            while (!nextCoordinate.left.equals('G')) {
+                robot.randomlyReorient();
+                nextCoordinate = robot.moveAhead();
+
+                //clearing prompt
+                for (int i = 0; i < 30; i++)
+                    System.out.println();
+
+                map.printMapAndRobot(robot);
+                loopCount++;
+                System.out.println("count:"+loopCount);
+                Thread.sleep(10);
+            }
+            System.out.println(loopCount);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    private static void problem3(String fileName) {
+        {
+            try {
+                Map map = new Map(fileName);
+                Robot robot = new Robot(map);
+                int loopCount = 0;
+                Tuple<Object, Object> nextCoordinate = new Tuple<Object, Object> (Map.CHAR_EMPTY, Map.CHAR_EMPTY);
+                while (!nextCoordinate.left.equals('G')) {
+                    robot.randomlyReorient();
+                    nextCoordinate = robot.moveAhead();
+                    loopCount++;
+                }
+                System.out.println(loopCount);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
 
     private static void problem4(String fileName) {
         try {
@@ -40,33 +98,5 @@ public class Controller {
             e.printStackTrace();
         }
 
-    }
-
-    private static void problem3(String fileName) {
-        {
-            try {
-                Map map1 = new Map(fileName);
-                Robot robot = new Robot(map1);
-                int loopCount = 0;
-                Tuple<Object, Object> nextCoordinate = new Tuple<Object, Object> (Map.CHAR_EMPTY, Map.CHAR_EMPTY);
-                while (!nextCoordinate.left.equals('G')) {
-                    robot.randomlyReorient();
-                    nextCoordinate = robot.moveAhead();
-
-                    //clearing prompt
-                    //for (int i = 0; i < 30; i++)
-                    //    System.out.println();
-
-                    //map1.printMapAndRobot(robot);
-                    loopCount++;
-                    //System.out.println("count:"+loopCount);
-                    //Thread.sleep(10);
-                }
-                System.out.println(loopCount);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
     }
 }
