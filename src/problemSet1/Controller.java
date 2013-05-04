@@ -64,8 +64,6 @@ public class Controller {
             try {
                 Map map = new Map(fileName);
                 Robot robot = new Robot(map);
-                System.out.println(((Robot)robot.clone()).getState() == robot.getState());
-                System.out.println(((Robot)robot.clone()).getState().equals(robot.getState()));
                 int loopCount = 0;
                 Tuple<Object, Object> nextCoordinate = new Tuple<Object, Object> (Map.CHAR_EMPTY, Map.CHAR_EMPTY);
                 while (!nextCoordinate.left.equals('G')) {
