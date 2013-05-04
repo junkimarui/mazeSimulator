@@ -1,6 +1,6 @@
 package problemSet1;
 
-public class Robot {
+public class Robot implements Cloneable {
     private Map map;
     private State state;
     public static int ACTION_NUM = 3;
@@ -45,5 +45,15 @@ public class Robot {
         }
         return null;
     }
-
+    
+    @Override
+    public Robot clone() {  
+        try {  
+            Robot clonedRobot = (Robot)super.clone();  
+            clonedRobot.state = this.state.clone();
+            return clonedRobot;
+        } catch (CloneNotSupportedException e) {
+            return null;  
+        }  
+    } 
 }

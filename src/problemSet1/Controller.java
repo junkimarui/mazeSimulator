@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class Controller {
     public static String defaultFileName = "maze-61-21.txt";
-    public static int defaultProblemNumber = 4;
+    public static int defaultProblemNumber = 3;
 
     public static void main(String[] args) {
         // if argument of this program exists  
@@ -20,10 +20,13 @@ public class Controller {
         switch(problemNumber) {
         case 2:
             problem2(fileName);
+            break;
         case 3:
             problem3(fileName);
+            break;
         case 4:
             problem4(fileName);
+            break;
         default:
             System.err.println("Please choose 2,3,4 for problem number");
         }
@@ -50,10 +53,8 @@ public class Controller {
             }
             System.out.println(loopCount);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -63,6 +64,8 @@ public class Controller {
             try {
                 Map map = new Map(fileName);
                 Robot robot = new Robot(map);
+                System.out.println(((Robot)robot.clone()).getState() == robot.getState());
+                System.out.println(((Robot)robot.clone()).getState().equals(robot.getState()));
                 int loopCount = 0;
                 Tuple<Object, Object> nextCoordinate = new Tuple<Object, Object> (Map.CHAR_EMPTY, Map.CHAR_EMPTY);
                 while (!nextCoordinate.left.equals('G')) {
@@ -72,7 +75,6 @@ public class Controller {
                 }
                 System.out.println(loopCount);
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -88,13 +90,12 @@ public class Controller {
             int loopCount = 0;
             Tuple<Object, Object> nextCoordinate = null;
             while (nextCoordinate == null || !nextCoordinate.left.equals('G')) {
-                int actionID = qLearner.getMaxQAction(robot.getState());
+                int actionID = qLearner.getMaxQAction(robot);
                 nextCoordinate = robot.action(actionID);
                 loopCount++;
             }
             System.out.println(loopCount);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

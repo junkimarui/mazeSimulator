@@ -32,10 +32,10 @@ public class QLearner {
                 }
                 else {
                     // pick up action that maximizes q-value
-                    actionID = getMaxQAction(robot.getState());
+                    actionID = getMaxQAction(robot);
                 }
                 signal = robot.action(actionID);
-                final Tuple<State,Integer> stateWithAction = new Tuple<State,Integer>((State)robot.getState().clone(),actionID);
+                final Tuple<State,Integer> stateWithAction = new Tuple<State,Integer>(robot.getState().clone(),actionID);
 
                 updateQValue();
 
@@ -54,9 +54,20 @@ public class QLearner {
         }
     }
 
-    public int getMaxQAction(State state) {
-        //not yet implemented
-        return (int)(rand.nextDouble()*Robot.ACTION_NUM);
+    public int getMaxQAction(Robot robot) {
+        int optimumAID = 2;
+        double qMaxVal = -Double.MAX_VALUE;
+        for (int a = 0; a < Robot.ACTION_NUM; a++) {
+            Robot clonedRobot = robot.clone();
+            Tuple<Object, Object> signal = clonedRobot.action(a);
+            //get q value
+            double qVal = 0.0;// not yet implemented
+            if (qVal > qMaxVal) {
+                qMaxVal = qVal;
+                optimumAID = a;
+            }
+        }
+        return optimumAID;
     }
 
     private void updateQValue() {

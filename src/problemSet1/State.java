@@ -44,9 +44,9 @@ public class State implements Cloneable {
         return this.x * 1000 + this.y * 10 + this.orientation;
     }
     @Override
-    public Object clone() {  
+    public State clone() {  
         try {  
-            return super.clone();  
+            return (State)super.clone();  
         } catch (CloneNotSupportedException e) {
             return null;  
         }  
