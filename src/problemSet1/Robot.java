@@ -1,22 +1,22 @@
 package problemSet1;
 
 public class Robot implements Cloneable {
-    private Map map;
+    private Maze maze;
     private State state;
     public static int ACTION_NUM = 3;
     public State getState() {
         return state;
     }
-    public Robot (Map map) {
-        this.map = map;
+    public Robot (Maze maze) {
+        this.maze = maze;
         this.state = new State(0, 0, State.NORTH);
-        map.placeRobot(this);
+        maze.placeRobot(this);
     }
     public void turnLeft() {
-        map.turnRobotLeft(this);
+        maze.turnRobotLeft(this);
     }
     public void turnRight() {
-        map.turnRobotRight(this);
+        maze.turnRobotRight(this);
     }
     public void randomlyReorient() {
         int rand = (int)(Math.random()*4);
@@ -25,27 +25,27 @@ public class Robot implements Cloneable {
         }
     }
     public Tuple<Object,Object> lookForward() {
-        return map.tellRobotForward(this);
+        return maze.tellRobotForward(this);
     }
     public Tuple<Object, Object> moveAhead() {
-        return map.moveRobotAhead(this);
+        return maze.moveRobotAhead(this);
     }
     
     public Tuple<Object,Object> action(int actionID) {
-        if (actionID == 0) {
+        switch(actionID) {
+        case 0:
             turnLeft();
             return null;
-        }
-        else if (actionID == 1) {
+        case 1:
             turnRight();
             return null;
-        }
-        else if (actionID == 2) {
+        case 2:
             return moveAhead();
+        default:
+            return null;
         }
-        return null;
     }
-    
+
     @Override
     public Robot clone() {  
         try {  

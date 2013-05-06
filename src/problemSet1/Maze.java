@@ -3,7 +3,7 @@ package problemSet1;
 import java.io.*;
 import java.util.*;
 
-public class Map {
+public class Maze {
     public static final char CHAR_WALL = '\u2588'; //'█'
     public static final char CHAR_EMPTY = '\u0020'; //' '
     public static final char CHAR_START = '\u0053'; //'S'
@@ -25,7 +25,7 @@ public class Map {
         }
     }
 
-    public Map (String fileName) throws IOException {
+    public Maze (String fileName) throws IOException {
         FileInputStream fr = new FileInputStream(fileName);
         InputStreamReader in = new InputStreamReader(fr,"UTF-8");
         BufferedReader br = new BufferedReader(in);
@@ -66,9 +66,8 @@ public class Map {
 
     public Tuple<Object, Object> tellRobotForward(Robot robot) {
         State robotState = robot.getState();
-        int direction = robotState.orientation;
-        int diff_x = (direction % 2) * (2 - direction);
-        int diff_y = (1 - (direction % 2)) * (direction - 1);
+        int diff_x = robotState.getHeadingDiffX();
+        int diff_y = robotState.getHeadingDiffY();
         char mapState1 = this.get(robotState.x + diff_x, robotState.y + diff_y);
         if (mapState1 == CHAR_WALL) {
             return new Tuple<Object, Object> (mapState1,CHAR_WALL);
@@ -120,8 +119,8 @@ public class Map {
         }
     }
 
-    public int manhattanDistanceToGoal(Robot robot) {
-        return Math.abs(goal.x - robot.getState().x)
-        + Math.abs(goal.y - robot.getState().y);
+    public int manhattanDistanceToGoal(final State state) {
+        return Math.abs(goal.x - state.x)
+        + Math.abs(goal.y - state.y);
     }
 }

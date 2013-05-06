@@ -9,6 +9,8 @@ public class State implements Cloneable {
     public static final int RIGHT = 1;
     /*  '↑','→','↓','←' */
     public static final char[] CHAR_ORIENTATION = {'\u2191','\u2192','\u2193','\u2190'};
+    public static final int[] DIFF_X = {0,1,0,-1};
+    private static final int[] DIFF_Y = {-1,0,1,0};
     
     public int x;
     public int y;
@@ -27,6 +29,14 @@ public class State implements Cloneable {
         else
             this.orientation = this.orientation % 4;
         return this;
+    }
+    
+    public int getHeadingDiffX() {
+        return DIFF_X[this.orientation];
+    }
+    
+    public int getHeadingDiffY() {
+        return DIFF_Y[this.orientation];
     }
     
     public boolean equalsPosition(State s) {
