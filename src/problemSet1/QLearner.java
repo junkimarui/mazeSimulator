@@ -1,69 +1,114 @@
 package problemSet1;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 public class QLearner {
     public Map<Tuple<State,Integer>,Double> q;
-    private int trialNumber;
-    private Maze map;
-    private Random rand; //maybe not thread safe
+    private int trailNumber;
+    private Maze maze;
+    private Random rand;
     private ArrayList<Integer> qMaxIdx; //not thread safe
+    private Boolean terminateFlag;
     public static double alpha = 0.80;
     public static double gamma = 0.50;
     public static double reward = 100.0;
     public static double punishment = -1;//must be negative
 
-
-    public QLearner (Maze map, int trials) {
-        trialNumber = trials;
-        q = new HashMap<Tuple<State,Integer>,Double>();
-        this.map = map;
+    public QLearner (Maze maze, int trails) {
+        trailNumber = trails;
+        q = new ConcurrentHashMap<Tuple<State,Integer>,Double>();
+        this.maze = maze;
         rand = new Random();
         qMaxIdx = new ArrayList<Integer>(Robot.ACTION_NUM);
+        terminateFlag = false;
     }
 
-    public void learn() {
-        for (int i = 0; i < trialNumber; i++) {
-            System.err.println("q-learning:"+(i+1));
-            Robot robot = new Robot(map);
-            Tuple<Object, Object> signal = null;
-            int loopNum = 0;
-            while (signal == null || !signal.left.equals('G')) {
-                double r = rand.nextDouble();//pick up random double [0.0 1.0)
-                int nextAction,currentAction;
-                State prevState = robot.getState().clone();
-                if (r < 0.2) {
-                    // move randomly in 20%
-                    currentAction = (int)(rand.nextDouble()*Robot.ACTION_NUM);
-                }
-                else {
-                    // pick up action that maximizes q-value
-                    currentAction = getMaxQAction(prevState);
-                }
-                final Tuple<State,Integer> prevSA = new Tuple<State,Integer>(prevState,currentAction);
-                signal = robot.action(currentAction);
-                //map.printMapAndRobot(robot);
-                //System.out.println("action:"+currentAction+" q:"+q.get(prevSA));
-                if (signal != null && signal.left.equals('B')) {
-                    //bumped, give punishment (assign the val of punishment)
-                    q.put(prevSA, punishment);
-                }
-                else {
-                    State currentState = robot.getState().clone();
-                    nextAction = getMaxQAction(currentState);
-                    final Tuple<State,Integer> currentSA = new Tuple<State,Integer>(currentState,nextAction);
-                    updateQValue(prevSA,currentSA,signal);
-                }
+    public void learn(final int threads, final long timeout, final int randomStart) {
+        ExecutorService exec;
+        terminateFlag = false;
+        switch(threads) {
+        case 0:
+            exec = Executors.newCachedThreadPool();
+            break;
+        default:
+            exec = Executors.newFixedThreadPool(threads);
+        }
+        for (int i = 0; i < trailNumber; i++) {
+            final int learnCount = i;
+            exec.execute(new Runnable(){
+                private ArrayList<Integer> qMaxLocal = new ArrayList<Integer>();
+                public void run() {
+                    System.err.println("q-learning:"+(learnCount+1));
+                    Robot robot = new Robot(maze,randomStart);
+                    Tuple<Object, Object> signal = null;
+                    int loopNum = 0;
+                    while (signal == null || !signal.left.equals('G')) {
+                        double r = rand.nextDouble();//pick up random double [0.0 1.0)
+                        int nextAction,currentAction;
+                        State prevState = robot.getState().clone();
+                        if (r < 0.2) {
+                            // move randomly in 20%
+                            currentAction = (int)(rand.nextDouble()*Robot.ACTION_NUM);
+                        }
+                        else {
+                            // pick up action that maximizes q-value
+                            currentAction = getMaxQAction(prevState,qMaxLocal);
+                        }
+                        final Tuple<State,Integer> prevSA = new Tuple<State,Integer>(prevState,currentAction);
+                        signal = robot.action(currentAction);
+                        //map.printMapAndRobot(robot);
+                        //System.out.println("action:"+currentAction+" q:"+q.get(prevSA));
+                        if (signal != null && signal.left.equals('B')) {
+                            //bumped, give punishment (assign the val of punishment)
+                            q.put(prevSA, punishment);
+                        }
+                        else {
+                            State currentState = robot.getState().clone();
+                            nextAction = getMaxQAction(currentState,qMaxLocal);
+                            final Tuple<State,Integer> currentSA = new Tuple<State,Integer>(currentState,nextAction);
+                            updateQValue(prevSA,currentSA,signal);
+                        }
 
-                loopNum++;
-                /*if (loopNum % 100000 == 0)
+                        loopNum++;
+                        /*if (loopNum % 100000 == 0)
                             System.err.println("qloop:"+loopNum);
-                 */
+                         */
+                        if(terminateFlag)
+                            break;
+                    }
+                    if (!terminateFlag) {
+                        System.err.println("q-learning(done):"+(learnCount+1));
+                    }
+                    else {
+                        System.err.println("q-learning(cancelled):"+(learnCount+1));
+                    }
+                }
+            });
+        }
+        exec.shutdown();
+        try {
+            exec.awaitTermination(timeout, TimeUnit.SECONDS);
+            int attemptCount = 0;
+            while (!exec.isTerminated()) {
+                attemptCount++;
+                System.err.println("attempt to terminate threads:"+attemptCount);
+                terminateFlag = true;
+                exec.shutdownNow();
+                Thread.sleep(1000);
+                if (attemptCount > 10)
+                    break;
             }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
     public int getMaxQAction(final State state) {
+        return getMaxQAction(state, qMaxIdx);
+    }
+
+    public int getMaxQAction(final State state, ArrayList<Integer> qMaxIdxLocal) {
         double qMaxVal = -Double.MAX_VALUE;
         for (int a = 0; a < Robot.ACTION_NUM; a++) {
             final Tuple<State,Integer> stateWithAction = new Tuple<State,Integer>(state,a);
@@ -77,15 +122,15 @@ public class QLearner {
             }
             if (qVal > qMaxVal) {
                 qMaxVal = qVal;
-                qMaxIdx.clear();
-                qMaxIdx.add(a);
+                qMaxIdxLocal.clear();
+                qMaxIdxLocal.add(a);
             }
             else if (qVal == qMaxVal) {
-                qMaxIdx.add(a);
+                qMaxIdxLocal.add(a);
             }
         }
-        int optID = qMaxIdx.get(rand.nextInt(qMaxIdx.size()));
-        qMaxIdx.clear();
+        int optID = qMaxIdxLocal.get(rand.nextInt(qMaxIdxLocal.size()));
+        qMaxIdxLocal.clear();
         return optID;
     }
 
@@ -110,5 +155,4 @@ public class QLearner {
         }
         q.put(prevSA, qPrevVal);
     }
-
 }

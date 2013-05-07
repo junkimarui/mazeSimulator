@@ -94,8 +94,21 @@ public class Maze {
     }
 
     public void placeRobot(Robot robot) {
-        robot.getState().x = start.x;
-        robot.getState().y = start.y;
+        if (robot.randomStart == 0) {
+            robot.getState().x = start.x;
+            robot.getState().y = start.y;
+        }
+        else {
+            Random rand = new Random();
+            int x = rand.nextInt(this.data[0].length);
+            int y = rand.nextInt(this.data.length);
+            while (get(x,y) == CHAR_WALL||get(x,y) == CHAR_GOAL) {
+                x = rand.nextInt(this.data[0].length);
+                y = rand.nextInt(this.data.length);
+            }
+            robot.getState().x = x;
+            robot.getState().y = y;
+        }
     }
 
     public void printMapAndRobot(Robot robot) {
