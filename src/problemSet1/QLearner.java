@@ -24,7 +24,7 @@ public class QLearner {
         terminateFlag = false;
     }
 
-    public void learn(final int threads, final long timeout, final int randomStart) {
+    public void learn(final int threads, final long timeout, final boolean randomizedStart) {
         ExecutorService exec;
         terminateFlag = false;
         switch(threads) {
@@ -35,12 +35,12 @@ public class QLearner {
             exec = Executors.newFixedThreadPool(threads);
         }
         for (int i = 0; i < trailNumber; i++) {
-            final int learnCount = i;
+            final int trailIndex = i;
             exec.execute(new Runnable(){
                 private ArrayList<Integer> qMaxLocal = new ArrayList<Integer>();
                 public void run() {
-                    System.err.println("q-learning:"+(learnCount+1));
-                    Robot robot = new Robot(maze,randomStart);
+                    System.err.println("q-learning:"+(trailIndex+1));
+                    Robot robot = new Robot(maze,randomizedStart && (trailIndex > 0));
                     final int length = maze.manhattanDistanceToGoal(robot.getState().clone());
                     Tuple<Object, Object> signal = null;
                     int loopNum = 0;
@@ -79,10 +79,10 @@ public class QLearner {
                             break;
                     }
                     if (!terminateFlag) {
-                        System.err.println("q-learning(done):"+(learnCount+1)+" initLength:"+length);
+                        System.err.println("q-learning(done):"+(trailIndex+1)+" init distance:"+length);
                     }
                     else {
-                        System.err.println("q-learning(cancelled):"+(learnCount+1)+" initLength:"+length);
+                        System.err.println("q-learning(cancelled):"+(trailIndex+1)+" init distance:"+length);
                     }
                 }
             });

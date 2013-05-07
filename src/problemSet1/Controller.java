@@ -3,13 +3,13 @@ package problemSet1;
 import java.io.IOException;
 
 public class Controller {
-    public static String defaultFileName = "maze-61-21.txt";
+    public static String defaultFileName = "maze-9-9.txt";
     public static int defaultProblemNumber = 4;
     public static int defaultTrailNumber = 100;
     public static int defaultThreadNumber = 1;
     public static long defaultTimeOut = Long.MAX_VALUE;
     public static int defaultLearnCount = 1;
-    public static int maxLoopToFindGoal = 100000000;
+    public static long maxLoopToFindGoal = 100000000L;
 
     public static void main(String[] args) {
         // if argument of this program exists  
@@ -21,15 +21,15 @@ public class Controller {
         int threadNumber = defaultThreadNumber;
         long timeOut = defaultTimeOut;
         int learnCount = defaultLearnCount;
-        int maxLoop = maxLoopToFindGoal;
+        long maxLoop = maxLoopToFindGoal;
 
         switch (args.length) {
         case 7:
-            maxLoop = Integer.parseInt(args[6]);
+            maxLoop = Long.parseLong(args[6]);
         case 6:
             learnCount = Integer.parseInt(args[5]);
         case 5:
-            timeOut = Integer.parseInt(args[4]);
+            timeOut = Long.parseLong(args[4]);
         case 4:
             threadNumber =  Integer.parseInt(args[3]);
         case 3:
@@ -59,7 +59,7 @@ public class Controller {
         try {
             Maze maze = new Maze(fileName);
             Robot robot = new Robot(maze);
-            int loopCount = 0;
+            long loopCount = 0;
             Tuple<Object, Object> nextCoordinate = new Tuple<Object, Object> (Maze.CHAR_EMPTY, Maze.CHAR_EMPTY);
             while (!nextCoordinate.left.equals('G')) {
                 robot.randomlyReorient();
@@ -87,7 +87,7 @@ public class Controller {
             try {
                 Maze maze = new Maze(fileName);
                 Robot robot = new Robot(maze);
-                int loopCount = 0;
+                long loopCount = 0;
                 Tuple<Object, Object> nextCoordinate = new Tuple<Object, Object> (Maze.CHAR_EMPTY, Maze.CHAR_EMPTY);
                 while (!nextCoordinate.left.equals('G')) {
                     robot.randomlyReorient();
@@ -101,16 +101,17 @@ public class Controller {
         }
     }
 
-    private static void problem4(String fileName, int trailNumber, int threads, long timeout, int learnCount, int maxLoop) {
+    private static void problem4(String fileName, int trailNumber, int threads, long timeout, int learnCount, long maxLoop) {
         try {
             Maze maze = new Maze(fileName);
             QLearner qLearner = new QLearner(maze,trailNumber);
             for (int i = 0; i < learnCount; i++) {
                 System.err.println("q-learning-set:"+(i+1));
-                qLearner.learn(threads,timeout,learnCount-1);
+                boolean randomizedStart = (learnCount > 1) ? true:false;
+                qLearner.learn(threads,timeout,randomizedStart);
             }
             Robot robot = new Robot(maze);
-            int loopCount = 0;
+            long loopCount = 0;
             Tuple<Object, Object> nextCoordinate = null;
             while (nextCoordinate == null || !nextCoordinate.left.equals('G')) {
                 int actionID = qLearner.getMaxQAction(robot.getState().clone());

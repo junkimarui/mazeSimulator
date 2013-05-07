@@ -3,15 +3,15 @@ package problemSet1;
 public class Robot implements Cloneable {
     private Maze maze;
     private State state;
-    public int randomStart;
+    public boolean randomStart;
     public static int ACTION_NUM = 5;
     public State getState() {
         return state;
     }
     public Robot (Maze maze) {
-        this(maze, 0);
+        this(maze, false);
     }
-    public Robot (Maze maze, int randomStart) {
+    public Robot (Maze maze, boolean randomStart) {
         this.maze = maze;
         this.state = new State(0, 0, State.NORTH);
         this.randomStart = randomStart;
@@ -58,9 +58,9 @@ public class Robot implements Cloneable {
     /*
     public Tuple<Object, Object> moveStraightAhead() {
         Tuple<Object, Object> nextBlocks = lookForward();
-        if (nextBlocks.right.equals(Map.CHAR_WALL))
+        if (nextBlocks.right.equals(Maze.CHAR_WALL))
             return new Tuple<Object, Object>('B','U');
-        while (!nextBlocks.right.equals(Map.CHAR_WALL)) {
+        while (!nextBlocks.right.equals(Maze.CHAR_WALL)) {
             moveAhead();
             nextBlocks = lookForward();
         }

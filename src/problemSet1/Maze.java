@@ -94,7 +94,7 @@ public class Maze {
     }
 
     public void placeRobot(Robot robot) {
-        if (robot.randomStart == 0) {
+        if (!robot.randomStart) {
             robot.getState().x = start.x;
             robot.getState().y = start.y;
         }
