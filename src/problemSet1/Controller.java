@@ -6,7 +6,7 @@ public class Controller {
     public static String defaultFileName = "maze-61-21.txt";
     public static int defaultProblemNumber = 4;
     public static int defaultTrailNumber = 100;
-    public static int defaultThreadNumber = 0;
+    public static int defaultThreadNumber = 1;
     public static long defaultTimeOut = Long.MAX_VALUE;
     public static int defaultLearnCount = 1;
     public static int maxLoopToFindGoal = 100000000;
@@ -116,7 +116,7 @@ public class Controller {
                 int actionID = qLearner.getMaxQAction(robot.getState().clone());
                 nextCoordinate = robot.action(actionID);
                 loopCount++;
-                //map.printMapAndRobot(robot);
+                //maze.printMapAndRobot(robot);
                 if (loopCount % 10000000 == 0)
                     System.err.println("loop:"+loopCount);
                 if (loopCount >= maxLoop)

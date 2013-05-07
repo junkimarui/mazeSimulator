@@ -41,6 +41,7 @@ public class QLearner {
                 public void run() {
                     System.err.println("q-learning:"+(learnCount+1));
                     Robot robot = new Robot(maze,randomStart);
+                    final int length = maze.manhattanDistanceToGoal(robot.getState().clone());
                     Tuple<Object, Object> signal = null;
                     int loopNum = 0;
                     while (signal == null || !signal.left.equals('G')) {
@@ -78,10 +79,10 @@ public class QLearner {
                             break;
                     }
                     if (!terminateFlag) {
-                        System.err.println("q-learning(done):"+(learnCount+1));
+                        System.err.println("q-learning(done):"+(learnCount+1)+" initLength:"+length);
                     }
                     else {
-                        System.err.println("q-learning(cancelled):"+(learnCount+1));
+                        System.err.println("q-learning(cancelled):"+(learnCount+1)+" initLength:"+length);
                     }
                 }
             });

@@ -4,7 +4,7 @@ public class Robot implements Cloneable {
     private Maze maze;
     private State state;
     public int randomStart;
-    public static int ACTION_NUM = 4;
+    public static int ACTION_NUM = 5;
     public State getState() {
         return state;
     }
@@ -28,6 +28,18 @@ public class Robot implements Cloneable {
         for (int i = 0; i< rand; i++) {
             turnLeft();
         }
+    }
+    public Tuple<Object, Object> turnLeftAndGo() {
+        turnLeft();
+        return moveAhead();
+    }
+    public Tuple<Object, Object> turnRightAndGo() {
+        turnRight();
+        return moveAhead();
+    }
+    public Tuple<Object, Object> turnBackAndGo() {
+        turnLeft(); turnLeft();
+        return moveAhead();
     }
     public Tuple<Object,Object> lookForward() {
         return maze.tellRobotForward(this);
@@ -58,14 +70,14 @@ public class Robot implements Cloneable {
     public Tuple<Object,Object> action(int actionID) {
         switch(actionID) {
         case 0:
-            turnLeft();
-            return null;
+            return turnLeftAndGo();
         case 1:
-            turnRight();
-            return null;
+            return turnRightAndGo();
         case 2:
-            return moveAhead();
+            return turnBackAndGo();
         case 3:
+            return moveAhead();
+        case 4:
             return moveStraightAhead();
         default:
             return null;
