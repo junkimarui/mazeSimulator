@@ -117,11 +117,14 @@ public class Controller {
                 int actionID = qLearner.getMaxQAction(robot.getState().clone());
                 nextCoordinate = robot.action(actionID);
                 loopCount++;
-                //maze.printMapAndRobot(robot);
+                //comment out when the route learned should be printed
+                //maze.printMapAndRobot(robot); 
                 if (loopCount % 10000000 == 0)
                     System.err.println("loop:"+loopCount);
-                if (loopCount >= maxLoop)
-                    break;
+                if (loopCount >= maxLoop) {
+                    robot = new Robot(maze);
+                    loopCount = 0;
+                }
             }
             if (loopCount >= maxLoop)
                 System.out.println("> "+maxLoop);
